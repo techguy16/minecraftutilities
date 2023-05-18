@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manifest Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        h1 {text-align:center;}
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 48%;
+        }
+
+        .view-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .view-button:hover {
+            background-color: #45a049;
+        }
+
+        .download-button {
+            background-color: #008CBA;
+            color: white;
+        }
+
+        .download-button:hover {
+            background-color: #0073AD;
+        }
+
+        .manifest-container {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://cdn.icon-icons.com/icons2/2699/PNG/512/minecraft_logo_icon_168974.png" width="100px">
+    <h1>Manifest Generator</h1>
+    <form id="manifestForm">
+        <div>
+            <label for="packName">Pack Name:</label>
+            <input type="text" id="packName" required>
+        </div>
+        <div>
+            <label for="description">Description:</label>
+            <input type="text" id="description" required>
+        </div>
+        <div>
+            <label for="minVersion">Minimum Minecraft Version:</label>
+            <input type="text" id="minVersion" required>
+        </div>
+        <div>
+            <label for="packType">Pack Type:</label>
+            <select id="packType" required>
+                <option value="resourcepack">Resource Pack</option>
+                <option value="behaviorpack">Behavior Pack</option>
+                <option value="world">World</option>
+                <option value="skinpack">Skin Pack</option>
+            </select>
+        </div>
+        <div class="error-message" id="errorContainer"></div>
+        <div class="button-container">
+            <button type="button" id="viewManifestButton" class="view-button">View Manifest</button>
+            <button type="button" id="downloadManifestButton" class="download-button" disabled>Download Manifest</button>
+        </div>
+    </form>
+    <div class="manifest-container" id="manifestContainer" style="display: none;"></div>
+
+    <script>
+        var packNameInput = document.getElementById('packName');
+        var descriptionInput = document.getElementById('description');
+        var minVersionInput = document.getElementById('minVersion');
+        var packTypeInput = document.getElementById('packType');
+        var viewManifestButton = document.getElementById('viewManifestButton');
+        var downloadManifestButton = document.getElementById('downloadManifestButton');
+        var manifestContainer = document.getElementById('manifestContainer');
+        var errorContainer = document.getElementById('errorContainer');
+
+        minVersionInput.addEventListener('input', function () {
+            var version = minVersionInput.value.trim();
+            if (/^\d+(\.\d+){0,2}$/.test(version)) {
+                var versionArray = version.split('.').map(function (num) {
+                    return parseInt(num, 10);
+            });
+            while (versionArray.length < 3) {
+                versionArray.push(0);
+            }
+            minVersionInput.value = versionArray.join('.');
+            }
+        });
+
+
+        function generateManifest() {
+            var packName = packNameInput.value.trim();
+            var description = descriptionInput.value.trim();
+            var minVersion = minVersionInput.value.trim();
+            var packType = packTypeInput.value.trim();
+
+            var error = false;
+            var errorMessage = '';
+
+            if (!packName) {
+                error = true;
+                errorMessage += 'Pack Name is required. ';
+            }
+
+            if (!description) {
+                error = true;
+                errorMessage += 'Description is required. ';
+            }
+
+            if (!minVersion) {
+                error = true;
+                errorMessage += 'Minimum Minecraft Version is required. ';
+            }
+
+            if (!packType) {
+                error = true;
+                errorMessage += 'Pack Type is required.';
+            }
+
+            if (error) {
+                errorContainer.textContent = errorMessage;
+                manifestContainer.style.display = 'none';
+                downloadManifestButton.disabled = true;
+                return;
+            }
+
+            errorContainer.textContent = '';
+
+            var versionArray = minVersion.split('.').map(function (num) {
+                return parseInt(num, 10);
+            });
+
+            while (versionArray.length < 3) {
+                versionArray.push(0);
+            }
+
+            var manifest = {
+                header: {
+                    name: packName,
+                    description: description,
+                    min_engine_version: "[" + versionArray.join(',') + "]",
+                    pack_type: packType
+                },
+                modules: [
+                    {
+                        type: "resources",
+                        uuid: generateUUID(),
+                        version: "[" + versionArray.join(',') + "]"
+                    }
+                ]
+            };
+
+            var manifestString = JSON.stringify(manifest, null, 4);
+            manifestContainer.textContent = manifestString;
+            manifestContainer.style.display = 'block';
+
+            downloadManifestButton.disabled = false;
+        }
+
+        viewManifestButton.addEventListener('click', generateManifest);
+
+        downloadManifestButton.addEventListener('click', function () {
+            var manifest = manifestContainer.textContent;
+            var blob = new Blob([manifest], { type: 'application/json' });
+            var downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = 'manifest.json';
+            downloadLink.click();
+        });
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Minecraft Enchantment Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    
+    h1 {
+      text-align: center;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+    }
+    
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100px;
+        }
+  </style>
+  <script>
+    function calculateEnchantability() {
+      var levelInput = document.getElementById('level-input');
+      var enchantabilityInput = document.getElementById('enchantability-input');
+      var resultContainer = document.getElementById('result-container');
+      
+      var level = parseInt(levelInput.value);
+      var enchantability = parseInt(enchantabilityInput.value);
+      
+      if (isNaN(level) || isNaN(enchantability)) {
+        resultContainer.innerText = 'Invalid input. Please enter valid numbers.';
+        return;
+      }
+      
+      var enchantabilityModifier = level * enchantability;
+      var minEnchantability = enchantabilityModifier / 2;
+      var maxEnchantability = enchantabilityModifier * 3 / 2;
+      
+      resultContainer.innerText = 'Enchantability range: ' + minEnchantability + ' - ' + maxEnchantability;
+    }
+  </script>
+</head>
+<body>
+    <img src="https://cdn.icon-icons.com/icons2/2699/PNG/512/minecraft_logo_icon_168974.png" width="100px">
+
+  <h1>Minecraft Enchantment Calculator</h1>
+  
+  <label for="level-input">Enchantment Level:</label>
+  <input type="number" id="level-input" placeholder="Enter the enchantment level">
+  
+  <label for="enchantability-input">Enchantability:</label>
+  <input type="number" id="enchantability-input" placeholder="Enter the enchantability value">
+  
+  <button onclick="calculateEnchantability()">Calculate</button>
+  
+  <div id="result-container" class="result"></div>
+</body>
+</html>

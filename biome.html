@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biome Information</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    #biome-info {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin-top: 0;
+    }
+    img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100px;
+        }
+  </style>
+</head>
+
+<body>
+    <img src="https://cdn.icon-icons.com/icons2/2699/PNG/512/minecraft_logo_icon_168974.png" width="100px">
+  <h1>Biome Information</h1>
+  <label for="biome-select">Select a biome:</label>
+  <select id="biome-select">
+    <option value="ocean">Ocean</option>
+    <option value="plains">Plains</option>
+    <option value="desert">Desert</option>
+    <option value="mountains">Mountains</option>
+    <option value="forest">Forest</option>
+    <option value="taiga">Taiga</option>
+    <option value="swamp">Swamp</option>
+    <option value="river">River</option>
+    <option value="nether">Nether</option>
+    <option value="end">End</option>
+  </select>
+
+  <div id="biome-info"></div>
+
+  <script>
+    const biomeData = {
+      ocean: {
+        name: "Ocean",
+        description: "An expansive body of water with no land in sight."
+      },
+      plains: {
+        name: "Plains",
+        description: "A flat and open grassy biome with scattered trees."
+      },
+      desert: {
+        name: "Desert",
+        description: "A hot and arid biome characterized by sand and cacti."
+      },
+      mountains: {
+        name: "Mountains",
+        description: "A tall and rugged biome with steep slopes and rocky terrain."
+      },
+      forest: {
+        name: "Forest",
+        description: "A dense biome filled with trees and vegetation."
+      },
+      taiga: {
+        name: "Taiga",
+        description: "A cold biome with coniferous trees and snowy landscapes."
+      },
+      swamp: {
+        name: "Swamp",
+        description: "A wet and marshy biome with unique vegetation and water features."
+      },
+      river: {
+        name: "River",
+        description: "A flowing body of water that cuts through various biomes."
+      },
+      nether: {
+        name: "Nether",
+        description: "A dangerous and fiery dimension with unique mobs and resources."
+      },
+      end: {
+        name: "End",
+        description: "A mysterious dimension with floating islands and the Ender Dragon."
+      }
+    };
+
+    const biomeSelect = document.getElementById("biome-select");
+    const biomeInfo = document.getElementById("biome-info");
+
+    function handleBiomeSelection() {
+      const selectedBiome = biomeSelect.value;
+      const selectedBiomeData = biomeData[selectedBiome];
+
+      const biomeTitle = document.createElement("h2");
+      biomeTitle.textContent = selectedBiomeData.name;
+
+      const biomeDescription = document.createElement("p");
+      biomeDescription.textContent = selectedBiomeData.description;
+
+      biomeInfo.innerHTML = "";
+      biomeInfo.appendChild(biomeTitle);
+      biomeInfo.appendChild(biomeDescription);
+    }
+
+    biomeSelect.addEventListener("change", handleBiomeSelection);
+  </script>
+</body>
+
+</html>
